@@ -9,8 +9,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
 
-const usersAPI = require('./api/users');
-app.use('/api/users', usersAPI);
+const routes = require('./routes');
+app.use(routes);
 
 app.use(express.static(path.join(__dirname, '../build')));
 app.get('*', (request, response) => {
