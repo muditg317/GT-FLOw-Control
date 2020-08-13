@@ -12,9 +12,9 @@ app.use(cors());
 const usersAPI = require('./api/users');
 app.use('/api/users', usersAPI);
 
-app.use(express.static(path.join(__dirname, '../frontend/build')));
+app.use(express.static(path.join(__dirname, '../build')));
 app.get('*', (request, response) => {
-  response.sendFile(path.join(__dirname, '../frontend/build'));
+  response.sendFile(path.join(__dirname, '../build'));
 });
 
 const PORT = process.env.PORT || 8080;
