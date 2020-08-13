@@ -22,12 +22,12 @@
   "scripts": {
     "reactstart": "npm run watch:css && react-scripts start",
     "start": "node backend/server.js",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install && yarn add dotenv cross-var && npm run build",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install && npm run build",
     "build": "npm run build:css && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "build:css": "dotenv -- cross-var postcss %REACT_APP_STYLES_DIRECTORY%tailwind.scss -o %REACT_APP_STYLES_DIRECTORY%index.scss",
-    "watch:css": "dotenv -- cross-var postcss %REACT_APP_STYLES_DIRECTORY%tailwind.scss -o %REACT_APP_STYLES_DIRECTORY%index.scss"
+    "build:css": "postcss src/res/styles/tailwind.scss -o src/res/styles/index.scss",
+    "watch:css": "postcss src/res/styles/tailwind.scss -o src/res/styles/index.scss"
   },
   "eslintConfig": {
     "extends": "react-app"
