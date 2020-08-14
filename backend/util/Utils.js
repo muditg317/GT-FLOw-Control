@@ -1,6 +1,11 @@
-module.exports = {
-  promiseTimeout: (ms, promise) => {
+const DEFAULT_TIMEOUT = 5000;
 
+module.exports = {
+  DEFAULT_TIMEOUT,
+  promiseTimeout: (promise, ms) => {
+    if (!ms && ms !== 0) {
+      ms = DEFAULT_TIMEOUT;
+    }
     // Create a promise that rejects in <ms> milliseconds
     let timeout = new Promise((resolve, reject) => {
       let id = setTimeout(() => {
@@ -14,5 +19,12 @@ module.exports = {
       promise,
       timeout
     ]);
-  }
+  },
+  fieldsFromBody: (body, fieldNames) => {
+    let fields = {};
+    fieldNames.forEach((field) => {
+      fields[field] = body[field];
+    });
+    return fields;
+  },
 };
