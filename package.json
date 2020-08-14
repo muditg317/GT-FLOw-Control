@@ -24,7 +24,9 @@
   },
   "homepage": "https://github.com/muditg317/GT-FLOw-Control#readme",
   "devDependencies": {
-    "nodemon": "^2.0.4"
+    "autoprefixer": "^9.8.6",
+    "nodemon": "^2.0.4",
+    "postcss-cli": "^7.1.1"
   },
   "dependencies": {
     "concurrently": "^5.3.0"
