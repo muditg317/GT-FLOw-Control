@@ -1,13 +1,13 @@
 {
-  "name": "flow-control",
+  "name": "GT-FLOw-Control",
   "version": "0.1.0",
   "description": "",
   "main": "backend/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "install-deps": "cd frontend && npm install && cd ../backend && npm install",
-    "start": "node backend/server.js",
-    "server": "nodemon backend/server.js",
+    "start": "npm start --prefix backend",
+    "server": "npm run server --prefix backend",
     "frontend": "npm start --prefix frontend",
     "dev": "concurrently \"npm run server\" \"npm run frontend\"",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
