@@ -5,12 +5,12 @@
   "main": "backend/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "install-deps": "cd frontend && npm install && cd ../backend && npm install",
+    "postinstall": "cd frontend && npm install && cd ../backend && npm install",
     "start": "npm start --prefix backend",
     "server": "npm run server --prefix backend",
     "frontend": "npm start --prefix frontend",
     "dev": "concurrently \"npm run server\" \"npm run frontend\"",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false cd frontend && npm install --only=dev && npm run build"
   },
   "repository": {
     "type": "git",
@@ -23,12 +23,6 @@
     "url": "https://github.com/muditg317/GT-FLOw-Control/issues"
   },
   "homepage": "https://github.com/muditg317/GT-FLOw-Control#readme",
-  "devDependencies": {
-    "autoprefixer": "^9.8.6",
-    "nodemon": "^2.0.4",
-    "postcss-cli": "^7.1.1",
-    "tailwindcss": "^1.6.2"
-  },
   "dependencies": {
     "concurrently": "^5.3.0"
   }
