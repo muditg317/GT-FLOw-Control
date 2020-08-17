@@ -1,5 +1,4 @@
 import React from 'react';
-// import './app-header.scss';
 import NavBar from 'components/nav-bar';
 
 export default function AppHeader({ onAuthButtonPress }) {
