@@ -1,12 +1,11 @@
 import React from 'react';
-import './app-header.scss';
-import NavBar from '../nav-bar';
-import { SiteMap } from 'utils';
+// import './app-header.scss';
+import NavBar from 'components/nav-bar';
 
-export default function AppHeader() {
+export default function AppHeader({ onAuthButtonPress }) {
     return (
-            <header className="app-header">
-                <NavBar nav_items={SiteMap} />
+            <header className="w-full sticky top-0">
+                <NavBar onAuthButtonPress={onAuthButtonPress} />
             </header>
         );
 }

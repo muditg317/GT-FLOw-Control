@@ -1,11 +1,11 @@
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const { SECRET_OR_KEY } = require('../config/env');
-const { promiseTimeout, fieldsFromBody } = require('../util/Utils');
+const { promiseTimeout, fieldsFromBody } = require('../utils/Utils');
 
 // Load input validation
-const validateRegisterInput = require("../validation/register");
-const validateLoginInput = require("../validation/login");
+const validateRegisterInput = require('../validation/register');
+const validateLoginInput = require('../validation/login');
 
 const User = require('../models/User');
 
@@ -15,12 +15,12 @@ module.exports = {
     const { errors, isValid } = validateRegisterInput(request.body);
     // Check validation
     if (!isValid) {
-      return response.status(400).json(errors);
+      return response.status(400).json(errors ? {...errors} : {});
     }
     promiseTimeout(User.findByEmail(request.body.email))
       .then(users => {
         if (users.length) {
-          return response.status(400).json({ email: "Email already exists" });
+          return response.status(400).json({ email: 'Email already exists' });
         }
 
         const newUser = new User(fieldsFromBody(request.body, User.schema.requiredPaths()));
@@ -30,7 +30,30 @@ module.exports = {
             if (err) throw err;
             newUser.password = hash;
             promiseTimeout(newUser.save())
-              .then(user => response.json(user))
+              .then(user => {
+                if (!user.verified) {
+                  return response.status(400).json({ verification: false });
+                }
+                // Create JWT Payload
+                const payload = {
+                  id: user.id,
+                  name: user.name
+                };
+                // Sign token
+                jwt.sign(
+                  payload,
+                  SECRET_OR_KEY,
+                  {
+                    expiresIn: 31556926 // 1 year in seconds
+                  },
+                  (err, token) => {
+                    response.json({
+                      success: true,
+                      token: 'Bearer ' + token
+                    });
+                  }
+                );
+              })
               .catch(error => {
                 console.log(error);
                 response.status(503);
@@ -48,7 +71,7 @@ module.exports = {
     const { errors, isValid } = validateLoginInput(request.body);
     // Check validation
     if (!isValid) {
-      return response.status(400).json(errors);
+      return response.status(400).json(errors ? {...errors} : {});
     }
     const email = request.body.email;
     const password = request.body.password;
@@ -56,13 +79,13 @@ module.exports = {
     promiseTimeout(User.findOneByEmail(email))
       .then(user => {
         if (!user) {
-          return response.status(404).json({ emailnotfound: "Email not found" });
+          return response.status(404).json({ email: 'Email not found' });
         }
 
         // Check password
         bcrypt.compare(password, user.password).then(isMatch => {
           if (!isMatch) {
-            return response.status(400).json({ passwordincorrect: "Password incorrect" });
+            return response.status(400).json({ password: 'Password incorrect' });
           }
           // User matched
           // Create JWT Payload
@@ -80,7 +103,7 @@ module.exports = {
             (err, token) => {
               response.json({
                 success: true,
-                token: "Bearer " + token
+                token: 'Bearer ' + token
               });
             }
           );

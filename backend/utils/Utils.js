@@ -2,10 +2,7 @@ const DEFAULT_TIMEOUT = 5000;
 
 module.exports = {
   DEFAULT_TIMEOUT,
-  promiseTimeout: (promise, ms) => {
-    if (!ms && ms !== 0) {
-      ms = DEFAULT_TIMEOUT;
-    }
+  promiseTimeout: (promise, ms = DEFAULT_TIMEOUT) => {
     // Create a promise that rejects in <ms> milliseconds
     let timeout = new Promise((resolve, reject) => {
       let id = setTimeout(() => {

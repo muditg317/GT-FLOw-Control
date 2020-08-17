@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
-const passport = require("passport");
+const passport = require('passport');
 const app = express();
 require('./database');
 
@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(passport.initialize());
 
-require("./config/passport")(passport);
+require('./config/passport')(passport);
 
 const routes = require('./routes');
 app.use(routes);

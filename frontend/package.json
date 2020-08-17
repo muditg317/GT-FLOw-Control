@@ -13,6 +13,7 @@
     "@testing-library/user-event": "^7.1.2",
     "axios": "^0.19.2",
     "classnames": "^2.2.6",
+    "is-empty": "^1.2.0",
     "jwt-decode": "^2.2.0",
     "node-sass": "^4.14.1",
     "react": "^16.13.1",
@@ -25,12 +26,12 @@
     "redux-thunk": "^2.3.0"
   },
   "scripts": {
-    "start": "npm run watch:css && react-scripts start",
+    "start": "concurrently \"npm run watch:css\" \"react-scripts start\"",
     "build": "npm run build:css && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "build:css": "postcss src/res/styles/tailwind.scss -o src/res/styles/index.scss",
-    "watch:css": "postcss src/res/styles/tailwind.scss -o src/res/styles/index.scss"
+    "build:css": "postcss src/assets/styles/tailwind.scss -o src/assets/styles/index.scss",
+    "watch:css": "nodemon --watch src/assets/styles --ignore src/assets/styles/index.css --ext scss,css --exec \"postcss src/assets/styles/tailwind.css -o src/assets/styles/index.css\""
   },
   "proxy": "http://localhost:8080",
   "eslintConfig": {
@@ -50,8 +51,11 @@
     ]
   },
   "devDependencies": {
-    "autoprefixer": "^9.8.6",
+    "concurrently": "^5.3.0",
+    "nodemon": "^2.0.4",
     "postcss-cli": "^7.1.1",
+    "postcss-import": "^12.0.1",
+    "postcss-preset-env": "^6.7.0",
     "tailwindcss": "^1.6.2"
   },
   "engines": {

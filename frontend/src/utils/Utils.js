@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 
 export function addArray(array, ...arrays) {
     let newArr = [...array];
@@ -14,21 +15,8 @@ export function isDev() {
     return !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
 }
 
-export const DOM_SELECORS_USING_MOBILE = ["[data-tooltip]", ".canvas-container", ".app"];
-
 export function isMobile() {
     return window.ontouchstart !== undefined;
-}
-
-export function addMobileClasses() {
-    if (isMobile()) {
-        DOM_SELECORS_USING_MOBILE.forEach((selector) => {
-            document.querySelectorAll(`${selector}`).forEach((node) => {
-                node.classList.add("mobile");
-                console.log(node);
-            });
-        });
-    }
 }
 
 export function isReactComponent(component) {
@@ -46,8 +34,8 @@ export function windowHeight() {
 }
 
 export function spannifyText(text, afterTheseString) {
-    if (afterTheseString === "CAPITALS") {
-        return text.split("").map((char, i) => {
+    if (afterTheseString === 'CAPITALS') {
+        return text.split('').map((char, i) => {
             if (i > 0 && char === char.toUpperCase()) {
                 return (
                     <React.Fragment key={i}>
@@ -59,7 +47,7 @@ export function spannifyText(text, afterTheseString) {
             return char;
         });
     } else if (afterTheseString) {
-        return text.split(new RegExp(`([${afterTheseString}])`,"g")).map((str, i) => {
+        return text.split(new RegExp(`([${afterTheseString}])`,'g')).map((str, i) => {
             if (i > 0) {
                 return (
                     <React.Fragment key={i}>
@@ -71,7 +59,7 @@ export function spannifyText(text, afterTheseString) {
             return str;
         });
     } else {
-        return text.split("").map((char, i) => {
+        return text.split('').map((char, i) => {
             if (i > 0) {
                 return (
                     <React.Fragment key={i}>
@@ -88,3 +76,13 @@ export function spannifyText(text, afterTheseString) {
 export function upperFirstChar(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
+
+export function setAuthToken(token) {
+  if (token) {
+    // Apply authorization token to every request if logged in
+    axios.defaults.headers.common['Authorization'] = token;
+  } else {
+    // Delete auth header
+    delete axios.defaults.headers.common['Authorization'];
+  }
+};

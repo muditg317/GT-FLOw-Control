@@ -1,5 +1,5 @@
 const User = require('../models/User');
-const { promiseTimeout } = require('../util/Utils');
+const { promiseTimeout } = require('../utils/Utils');
 
 module.exports = {
   findAll: function(request, response) {

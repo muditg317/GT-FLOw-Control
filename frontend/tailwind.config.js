@@ -1,6 +1,20 @@
 module.exports = {
-  important: "#app",
+  important: 'body>div#root',
   purge: [
     './src/**/*.jsx',
   ],
+  theme: {
+    extend: {
+      inset: {
+        half: '50%',
+        full: '100%',
+      },
+      height: {
+        fill: '-webkit-fill-available',
+      },
+      zIndex: {
+        '-10': '-10',
+      },
+    },
+  },
 };
