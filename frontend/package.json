@@ -30,7 +30,7 @@
     "build": "npm run build:css && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "build:css": "postcss src/assets/styles/tailwind.scss -o src/assets/styles/index.scss",
+    "build:css": "postcss src/assets/styles/tailwind.css -o src/assets/styles/index.css",
     "watch:css": "nodemon --watch src/assets/styles --ignore src/assets/styles/index.css --ext scss,css --exec \"postcss src/assets/styles/tailwind.css -o src/assets/styles/index.css\""
   },
   "proxy": "http://localhost:8080",
