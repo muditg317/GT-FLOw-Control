@@ -17,6 +17,7 @@ export default function RegisterForm({ className, email, setEmail, firstName, se
     <>
       <div className={`container bg-white shadow-md rounded rounded-t-none px-8 pt-6 pb-8 mb-4 ${className}`}>
         <div className='form' role='form'>
+          { errors.globalError && <p className="form-error">{errors.globalError}</p> }
           <div className='form-row'>
             <div className='form-field'>
               <label className='field-label'>

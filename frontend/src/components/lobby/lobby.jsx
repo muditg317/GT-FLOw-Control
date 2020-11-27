@@ -1,7 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useHistory, useLocation } from "react-router-dom";
 
+export default function Lobby({ openAuthModal }) {
+  const location = useLocation();
+  const history = useHistory();
+  useEffect(() => {
+    const { privateAccessAttemptFrom } = location;
+    if (privateAccessAttemptFrom) {
+      openAuthModal(true, privateAccessAttemptFrom);
+      history.push(location.pathname);
+    }
+  }, [openAuthModal, location, history]);
 
-export default function Landing({ openAuthModal }) {
   return (
     <div className="flex flex-col items-center">
       <div className="w-full bg-blue-100 p-6">
@@ -11,8 +21,8 @@ export default function Landing({ openAuthModal }) {
         <h2 className="text-xl font-bold mb-2">Manage your FLO!</h2>
         <p className="mb-1">Use this platform for your FLO to easily manage various things including:</p>
         <ul className="mb-4 ml-3">
-          <li>Buddy Dates</li>
-          <li>Family Groups</li>
+          <li>Buddy dates</li>
+          <li>Family groups</li>
           <li>Member points</li>
         </ul>
         <h2 className="text-xl font-bold mb-2">Supported FLOs</h2>

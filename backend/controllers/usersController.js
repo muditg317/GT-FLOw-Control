@@ -1,31 +1,28 @@
+const jwt = require('jsonwebtoken');
+const { SECRET_OR_KEY } = require('../config/env');
 const User = require('../models/User');
-const { promiseTimeout } = require('../utils/Utils');
+const VerificationHash = require('../models/VerificationHash');
+const { promiseTimeout } = require('../utils');
 
 module.exports = {
-  findAll: function(request, response) {
-    promiseTimeout(User.find(request.query))
-      .then(books => response.json(books))
-      .catch(err => response.status(422).json(err));
+  findById: (request, response) => {
+    if (!request.headers.authorization) {
+      return response.status(403).json({ error: 'No credentials sent!' });
+    }
+    console.log("authorization", request.headers.authorization);
+    console.log("body", request.body);
+    console.log("params", request.params);
+    if (request.params.id) {
+      promiseTimeout(User.findById(request.params.id))
+        .then(user => {
+          response.status(200).json({...user});
+        })
+        .catch(error => {
+          console.log(error);
+          response.status(503).json({ error });
+        });
+    } else {
+      response.status(400).json({ error: 'Must provide ID' });
+    }
   },
-  findById: function(request, response) {
-    promiseTimeout(User.findById(request.params.id))
-      .then(book => response.json(book))
-      .catch(err => response.status(422).json(err));
-  },
-  create: function(request, response) {
-    promiseTimeout(User.create(request.body))
-      .then(newUser => response.json(newUser))
-      .catch(err => response.status(422).json(err));
-  },
-  update: function(request, response) {
-    promiseTimeout(User.findOneAndUpdate({ _id: request.params.id }, request.body))
-      .then(book => response.json(book))
-      .catch(err => response.status(422).json(err));
-  },
-  remove: function(request, response) {
-    promiseTimeout(User.findById({ _id: request.params.id }))
-      .then(book => book.remove())
-      .then(allbooks => response.json(allbooks))
-      .catch(err => response.status(422).json(err));
-  }
 };

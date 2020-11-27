@@ -1,17 +1,11 @@
 const router = require('express').Router()
 const authController = require('../../controllers/authController');
 const usersController = require('../../controllers/usersController');
+const userVerificationController = require('../../controllers/userVerificationController');
 
 router
-  .route('/')
-  .get(usersController.findAll)
-  .post(usersController.create);
-
-router
-  .route('/:id')
-  .get(usersController.findById)
-  .put(usersController.update)
-  .delete(usersController.remove);
+  .route('/info/:id')
+  .get(usersController.findById);
 
 router
   .route('/register')
@@ -20,5 +14,13 @@ router
 router
   .route('/login')
   .post(authController.login);
+
+router
+  .route('/verify')
+  .post(userVerificationController.verify);
+
+router
+  .route('/verify/:hash')
+  .post(userVerificationController.verify);
 
 module.exports = router;

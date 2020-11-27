@@ -1,12 +1,9 @@
 module.exports = {
   important: 'body>div#root',
-  purge: {
-    enabled: true,
-    content: [
-      './src/components/**/*.jsx',
-      './src/assets/styles/**/*.css'
-    ],
-  },
+  purge: [
+    './src/components/**/*.jsx',
+    './src/assets/styles/**/*.css'
+  ],
   theme: {
     extend: {
       inset: {

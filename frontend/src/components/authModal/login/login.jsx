@@ -1,10 +1,11 @@
 import React, { useCallback } from 'react';
+import { Link } from 'react-router-dom';
 
 const handleChange = setter => event => {
   setter(event.target.value);
 }
 
-export default function LoginForm({ className, email, setEmail, password, setPassword, errors, doRegister, submitAuthRequest}) {
+export default function LoginForm({ className, email, setEmail, password, setPassword, errors, doRegister, onExit, submitAuthRequest}) {
 
   const handleEnterPressed = useCallback(event => {
     if (event.key === 'Enter') {
@@ -17,6 +18,10 @@ export default function LoginForm({ className, email, setEmail, password, setPas
     <>
       <div className={`container bg-white shadow-md rounded rounded-t-none px-8 pt-6 pb-8 mb-4 ${className}`}>
         <div className="form" role="form">
+          { errors.verification !== undefined && <div className="flex flex-row items-center">
+            <p className="form-error">{errors.verification}</p><Link to="/verify" onClick={onExit} className="bg-purple-500 text-white font-bold py-2 px-4 rounded">Verify</Link>
+          </div> }
+          { errors.globalError && <p className="form-error">{errors.globalError}</p> }
           <div className="form-field">
             <label className="field-label">
               Email

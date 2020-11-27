@@ -26,6 +26,8 @@ const userSchema = new Schema({
     type: String,
     required: true
   },
+}, {
+  timestamps: true
 });
 
 Array.prototype.forEach.call(userSchema.requiredPaths(), requiredField => {

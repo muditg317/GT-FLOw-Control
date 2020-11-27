@@ -1,29 +1,30 @@
 import React, { useEffect, useState, useRef, useCallback, useContext } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { isEmpty } from 'utils';
 import { loginUserAction, registerUserAction, clearErrorsAction } from 'state-management/actions/authActions';
 import { store } from 'state-management';
 
 import LoginForm from './login';
 import RegisterForm from './register';
 
-const AuthModal = ({ shown, registered: isRegistered, onExit }) => {
+const AuthModal = ({ shown, registered: isRegistered, onExit, authSuccessRedirect }) => {
   const { state, dispatch } = useContext(store);
   const loginUser = useCallback((...args) => loginUserAction(dispatch)(...args), [dispatch]);
   const registerUser = useCallback((...args) => registerUserAction(dispatch)(...args), [dispatch]);
   const clearErrors = useCallback((...args) => clearErrorsAction(dispatch)(...args), [dispatch]);
-  const { errors: authErrors } = state;
+  const { errors } = state;
   const [ registered, setRegistered ] = useState(true);
   const [ firstName, setFirstName ] = useState('');
   const [ lastName, setLastName ] = useState('');
-  const [ email, setEmail ] = useState('');
+  const [ email, setEmail ] = useState(state.user.email || '');
   const [ flo, setFlo ] = useState('');
   const [ password, setPassword ] = useState('');
   const [ confirmPassword, setConfirmPassword ] = useState('');
-  const errors = authErrors.errors || authErrors || {};
   const modalOverlayRef = useRef(null);
   const modalContainerRef = useRef(null);
   const history = useHistory();
+  const location = useLocation();
 
   useEffect(() => {
     setRegistered(isRegistered);
@@ -46,11 +47,22 @@ const AuthModal = ({ shown, registered: isRegistered, onExit }) => {
   }, [shown, clearFields, clearErrors]);
 
   useEffect(() => {
-    if (state.auth.isAuthenticated) {
-      history.push('/dashboard');
-      onExit();
+    if (shown && state.auth.isAuthenticated) {
+      if (state.auth.user.verified) {
+        if (registered) {
+          const loginRedirect = authSuccessRedirect || (location.pathname === '/' && '/dashboard');
+          loginRedirect && history.push(loginRedirect);
+        } else {
+          history.push(authSuccessRedirect || '/dashboard');
+        }
+        onExit();
+      } else {
+        if (!registered) {
+          onExit();
+        }
+      }
     }
-  }, [history, state, onExit]);
+  }, [shown, history, state, onExit, authSuccessRedirect, registered, location.pathname]);
 
   const checkOverlayClick = (event) => {
     if (modalOverlayRef.current && modalOverlayRef.current === event.target && shown) {
@@ -58,6 +70,21 @@ const AuthModal = ({ shown, registered: isRegistered, onExit }) => {
         event.preventDefault();
     }
   }
+
+  // console.log("autoRedirrect?", authSuccessRedirect, "prev errors", errors);
+  const checkGlobalErrors = () => {
+    if (shown && state.auth.isAuthenticated) {
+      isEmpty(errors) && (state.auth.user.verified || (errors.verification = 'This account isn\'t verified! Please check your email.'));
+    } else {
+      delete errors.verification;
+    }
+    if (authSuccessRedirect) {
+      isEmpty(errors) && (errors.globalError = `You will be redirected to ${authSuccessRedirect.slice(1)} once authenticated.`);
+    } else {
+      delete errors.globalError;
+    }
+  };
+  checkGlobalErrors();
 
   useEffect(() => {
     const escapePressedHandler = event => {
@@ -93,18 +120,17 @@ const AuthModal = ({ shown, registered: isRegistered, onExit }) => {
     const userData = {
       email, password,
     };
-    loginUser(userData);
-  }, [loginUser, email, password]);
+    loginUser(userData, history, authSuccessRedirect);
+  }, [history, authSuccessRedirect, loginUser, email, password]);
 
   const sendRegisterRequest = useCallback(() => {
     const newUser = {
       firstName, lastName, email, flo, password, confirmPassword
     };
-    registerUser(newUser, history);
-  }, [registerUser, history, firstName, lastName, email, flo, password, confirmPassword]);
+    registerUser(newUser, history, authSuccessRedirect);
+  }, [registerUser, history, authSuccessRedirect, firstName, lastName, email, flo, password, confirmPassword]);
 
   const submitAuthRequest = useCallback(() => {
-    console.log("submit auth");
     registered ? sendLoginRequest() : sendRegisterRequest();
   }, [registered, sendLoginRequest, sendRegisterRequest]);
 
@@ -136,8 +162,8 @@ const AuthModal = ({ shown, registered: isRegistered, onExit }) => {
               </li>
             </ul>
             { registered ?
-              <LoginForm {...{submitAuthRequest, doRegister, email, setEmail, password, setPassword, errors}} className={`${registered ? 'block' : 'hidden'}`} />
-            : <RegisterForm {...{submitAuthRequest, doLogin, email, setEmail, password, setPassword, errors, firstName, setFirstName, lastName, setLastName, flo, setFlo, confirmPassword, setConfirmPassword}} className={`${!registered ? 'block' : 'hidden'}`} />
+              <LoginForm {...{submitAuthRequest, doRegister, onExit, email, setEmail, password, setPassword, errors}} className={`${registered ? 'block' : 'hidden'}`} />
+            : <RegisterForm {...{submitAuthRequest, doLogin, onExit, email, setEmail, password, setPassword, errors, firstName, setFirstName, lastName, setLastName, flo, setFlo, confirmPassword, setConfirmPassword}} className={`${!registered ? 'block' : 'hidden'}`} />
             }
           </div>
         </div>

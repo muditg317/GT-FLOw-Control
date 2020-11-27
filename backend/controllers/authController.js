@@ -1,13 +1,19 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { SECRET_OR_KEY } = require('../config/env');
-const { promiseTimeout, fieldsFromBody } = require('../utils/Utils');
+const { promiseTimeout, fieldsFromBody } = require('../utils');
 
 // Load input validation
 const validateRegisterInput = require('../validation/register');
 const validateLoginInput = require('../validation/login');
 
 const User = require('../models/User');
+
+const authPayload = user => ({
+  id: user.id,
+  name: `${user.firstName} ${user.lastName}`,
+  verified: user.verified,
+});
 
 module.exports = {
   register: (request, response) => {
@@ -29,16 +35,15 @@ module.exports = {
           bcrypt.hash(newUser.password, salt, (err, hash) => {
             if (err) throw err;
             newUser.password = hash;
-            promiseTimeout(newUser.save())
+            console.log('gen new user', newUser);
+            promiseTimeout(newUser.save(), 50000)
               .then(user => {
-                if (!user.verified) {
-                  return response.status(400).json({ verification: false });
-                }
+                // if (!user.verified) {
+                //   return response.status(400).json({ verification: false });
+                // }
+                console.log('registered', user);
                 // Create JWT Payload
-                const payload = {
-                  id: user.id,
-                  name: user.name
-                };
+                const payload = authPayload(user);
                 // Sign token
                 jwt.sign(
                   payload,
@@ -47,6 +52,7 @@ module.exports = {
                     expiresIn: 31556926 // 1 year in seconds
                   },
                   (err, token) => {
+                    console.log('auth token', token);
                     response.json({
                       success: true,
                       token: 'Bearer ' + token
@@ -58,11 +64,12 @@ module.exports = {
                 console.log(error);
                 response.status(503);
               });
+            console.log('saved');
           });
         });
       })
       .catch(error => {
-        console.log(error);
+        console.log($1rror);
         response.status(503);
       });
   },
@@ -81,7 +88,10 @@ module.exports = {
         if (!user) {
           return response.status(404).json({ email: 'Email not found' });
         }
-
+        // console.log("logging in", user);
+        // if (!user.verified) {
+        //   return response.status(400).json({ verification: 'This account isn\'t verified! Please check your email.' });
+        // }
         // Check password
         bcrypt.compare(password, user.password).then(isMatch => {
           if (!isMatch) {
@@ -89,10 +99,7 @@ module.exports = {
           }
           // User matched
           // Create JWT Payload
-          const payload = {
-            id: user.id,
-            name: user.name
-          };
+          const payload = authPayload(user);
           // Sign token
           jwt.sign(
             payload,
@@ -109,12 +116,12 @@ module.exports = {
           );
         })
         .catch(error => {
-          console.log(error);
+          console.log($1rror);
           response.status(503);
         });
       })
       .catch(error => {
-        console.log(error);
+        console.log($1rror);
         response.status(503);
       });
   },
